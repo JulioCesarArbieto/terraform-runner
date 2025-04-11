@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: latest
+    commands:
+      - echo Installing tools...
+      - curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+      - pip install checkov
+      - curl -s https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | bash
+
+  build:
+    commands:
+      - echo Running tflint...
+      - tflint .
+      - echo Running checkov...
+      - checkov -d .
+      - echo Running infracost breakdown...
+      - infracost breakdown --path=. --format=json --out-file=infracost.json
+
+artifacts:
+  files:
+    - infracost.json
