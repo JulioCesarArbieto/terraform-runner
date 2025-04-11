@@ -1,3 +1,11 @@
+module "infra_core" {
+  source = "./modules/infra_core"
+}
+
+module "codebuild_projects" {
+  source = "./modules/codebuild_projects"
+}
+
 module "ecr" {
   source = "./modules/ecr"
 }
@@ -11,13 +19,13 @@ module "sns_notifications" {
   email  = var.notification_email
 }
 
+module "security_tools" {
+  source = "./modules/security_tools"
+}
+
 module "ecs_task" {
   source       = "./modules/ecs_task"
   ecr_repo_url = module.ecr.repository_url
-}
-
-module "codebuild_projects" {
-  source = "./modules/codebuild_projects"
 }
 
 module "codepipeline" {
@@ -32,13 +40,10 @@ module "codepipeline" {
   github_token                = var.github_token
   security_codebuild_project = module.codebuild_projects.security_project_name
   deploy_codebuild_project   = module.codebuild_projects.deploy_project_name
+  github_webhook_secret_arn  = var.github_webhook_secret_arn
 }
 
 module "eventbridge" {
   source       = "./modules/eventbridge"
   pipeline_arn = module.codepipeline.pipeline_arn
-}
-
-module "security_tools" {
-  source = "./modules/security_tools"
 }
