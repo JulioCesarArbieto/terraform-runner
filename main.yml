@@ -1,0 +1,29 @@
+name: Terraform Validation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+      - name: Install tflint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+      - name: Run tflint
+        run: tflint
+      - name: Install Checkov
+        run: pip install checkov
+      - name: Run Checkov
+        run: checkov -d terraform/
+      - name: Install Infracost
+        run: |
+          curl -s https://api.infracost.io/install.sh | bash
+      - name: Run Infracost
+        run: infracost breakdown --path terraform/
