@@ -1,54 +1,29 @@
 resource "aws_codebuild_project" "security" {
-  name          = "security-project"
-  service_role  = aws_iam_role.codebuild_role.arn
-  source {
-    type      = "GITHUB"
-    location  = "https://github.com/${var.github_owner}/${var.github_repo}.git"
-    buildspec = "buildspec-security.yml"
-  }
+  name           = "security-check"
+  description    = "Security checks for the pipeline"
+  service_role   = var.codebuild_service_role
   artifacts {
-    type = "NO_ARTIFACTS"
+    type     = "S3"
+    location = var.s3_bucket_name
   }
-  environment {
-    compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/standard:6.0"
-    type                        = "LINUX_CONTAINER"
-    privileged_mode             = true
-    environment_variables       = []
+
+  source {
+    type = "GITHUB"
+    location = var.github_repo_url
   }
 }
 
 resource "aws_codebuild_project" "deploy" {
-  name          = "deploy-project"
-  service_role  = aws_iam_role.codebuild_role.arn
-  source {
-    type      = "GITHUB"
-    location  = "https://github.com/${var.github_owner}/${var.github_repo}.git"
-    buildspec = "buildspec-deploy.yml"
-  }
+  name           = "deploy-check"
+  description    = "Deploy checks for the pipeline"
+  service_role   = var.codebuild_service_role
   artifacts {
-    type = "NO_ARTIFACTS"
+    type     = "S3"
+    location = var.s3_bucket_name
   }
-  environment {
-    compute_type                = "BUILD_GENERAL1_SMALL"
-    image                       = "aws/codebuild/standard:6.0"
-    type                        = "LINUX_CONTAINER"
-    privileged_mode             = true
-    environment_variables       = []
-  }
-}
 
-resource "aws_iam_role" "codebuild_role" {
-  name = "terraform-runner-codebuild-role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [{
-      Action = "sts:AssumeRole",
-      Principal = {
-        Service = "codebuild.amazonaws.com"
-      },
-      Effect = "Allow",
-      Sid    = ""
-    }]
-  })
+  source {
+    type = "GITHUB"
+    location = var.github_repo_url
+  }
 }
