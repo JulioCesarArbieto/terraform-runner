@@ -10,7 +10,7 @@ module "codebuild_projects" {
   security_codebuild_name = "tf-security-check"
   deploy_codebuild_name   = "tf-deploy"
   ecs_task_definition_arn = module.ecs_task.ecs_task_definition_arn
-  aws_region              = var.aws_regio
+  aws_region              = var.aws_region
 }
 
 module "ecr" {
