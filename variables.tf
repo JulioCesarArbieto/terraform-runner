@@ -28,8 +28,9 @@ variable "github_token" {
   sensitive = true
 }
 variable "aws_region" {
-  description = "Región de AWS"
+  description = "AWS region to deploy resources"
   type        = string
+  default = "us-east-2"
 }
 
 variable "github_webhook_secret_arn" {
@@ -38,11 +39,37 @@ variable "github_webhook_secret_arn" {
 }
 
 variable "codebuild_service_role" {
-  description = "Role ARN para CodeBuild"
+  description = "IAM Role ARN for CodeBuild projects"
   type        = string
 }
 
+variable "s3_bucket_name" {
+  description = "S3 bucket name"
+  type        = string
+}
+
+
 variable "github_repo_url" {
-  description = "URL del repositorio de GitHub"
+  description = "URL of the GitHub repository"
+  type        = string
+}
+
+variable "eventbridge_role_arn" {
+  description = "IAM Role ARN for EventBridge to trigger targets"
+  type        = string
+}
+
+variable "ecs_cluster_name" {
+  description = "Name of the ECS cluster"
+  type        = string
+}
+
+variable "ecs_service_name" {
+  description = "Name of the ECS service"
+  type        = string
+}
+
+variable "ecs_task_arn" {
+  description = "ARN de la definición del task ECS"
   type        = string
 }

@@ -7,11 +7,3 @@ resource "aws_sns_topic_subscription" "email" {
   protocol  = "email"
   endpoint  = var.email
 }
-
-output "topic_arn" {
-  value = aws_sns_topic.pipeline_alerts.arn
-}
-
-variable "email" {
-  type = string
-}

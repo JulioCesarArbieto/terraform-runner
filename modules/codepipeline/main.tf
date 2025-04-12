@@ -3,18 +3,19 @@ resource "aws_codepipeline" "this" {
   role_arn = var.pipeline_role_arn
 
   artifact_store {
-    type     = "S3"
     location = var.s3_bucket_name
+    type     = "S3"
   }
 
   stage {
     name = "Source"
     action {
-      name     = "GitHub"
+      name     = "Source"
       category = "Source"
       owner    = "ThirdParty"
       provider = "GitHub"
-
+      version  = "1"  # Debes agregar esta línea
+      output_artifacts = ["source_output"]
       configuration = {
         "Owner"     = var.github_owner
         "Repo"      = var.github_repo

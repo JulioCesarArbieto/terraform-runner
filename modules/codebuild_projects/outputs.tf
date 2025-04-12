@@ -1,7 +1,7 @@
-output "security_project_name" {
-  value = aws_codebuild_project.security.name
+output "codebuild_project_name" {
+  value = aws_codebuild_project.this.name
 }
 
-output "deploy_project_name" {
-  value = aws_codebuild_project.deploy.name
+output "codebuild_project_arn" {
+  value = aws_codebuild_project.this.arn
 }

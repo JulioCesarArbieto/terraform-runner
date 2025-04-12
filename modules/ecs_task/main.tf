@@ -23,7 +23,7 @@ resource "aws_ecs_task_definition" "terraform_runner" {
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.cpu
-  memory                   = var.memory
+  memory                  = var.memory
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
 
   container_definitions = jsonencode([

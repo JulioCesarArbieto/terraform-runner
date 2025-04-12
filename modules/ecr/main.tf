@@ -1,7 +1,11 @@
 resource "aws_ecr_repository" "terraform_runner" {
-  name = "terraform-runner"
-}
+  name = var.repo_name
 
-output "repository_url" {
-  value = aws_ecr_repository.terraform_runner.repository_url
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  encryption_configuration {
+    encryption_type = "AES256"
+  }
 }

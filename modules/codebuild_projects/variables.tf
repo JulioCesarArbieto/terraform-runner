@@ -1,35 +1,30 @@
-variable "github_owner" {
-  description = "Propietario del repositorio GitHub"
+variable "codebuild_service_role" {
+  description = "The name of the CodeBuild service role"
   type        = string
 }
 
-variable "github_repo" {
-  description = "Nombre del repositorio GitHub"
-  type        = string
-}
-
-variable "github_branch" {
-  description = "Rama del repositorio GitHub"
-  type        = string
-  default     = "main"
-}
-
-variable "security_codebuild_name" {
-  description = "Nombre del proyecto CodeBuild para análisis de seguridad"
-  type        = string
-}
-
-variable "deploy_codebuild_name" {
-  description = "Nombre del proyecto CodeBuild para despliegue"
-  type        = string
-}
-
-variable "ecs_task_definition_arn" {
-  description = "ARN de la definición de tarea ECS"
+variable "name_prefix" {
+  description = "Prefix for resource names"
   type        = string
 }
 
 variable "aws_region" {
-  description = "Región de AWS"
+  description = "AWS region"
+  type        = string
+}
+
+variable "github_repo_url" {
+  description = "GitHub repository URL (e.g. https://github.com/usuario/repo)"
+  type        = string
+}
+
+variable "buildspec_path" {
+  description = "Path to the buildspec file (e.g. buildspec.yml)"
+  type        = string
+  default     = "buildspec.yml"
+}
+
+variable "s3_bucket_name" {
+  description = "The name of the S3 bucket to store build artifacts"
   type        = string
 }
