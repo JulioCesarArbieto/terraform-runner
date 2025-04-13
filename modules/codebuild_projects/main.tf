@@ -68,6 +68,34 @@ resource "aws_iam_role_policy" "codebuild_s3_access" {
   })
 }
 
+resource "aws_iam_role_policy" "codebuild_ecs_access" {
+  name = "${var.name_prefix}-codebuild-ecs-access"
+  role = aws_iam_role.codebuild_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ecs:RunTask",
+          "ecs:DescribeTasks",
+          "ecs:DescribeTaskDefinition",
+          "ecs:ListTasks"
+        ],
+        Resource = "*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "iam:PassRole"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_s3_bucket" "artifact_bucket" {
   bucket = "${var.name_prefix}-artifacts-bucket"
   force_destroy = true
@@ -78,7 +106,7 @@ resource "aws_s3_bucket" "artifact_bucket" {
 }
 
 resource "aws_codebuild_project" "this" {
-  name          = var.name_prefix
+  name          = "${var.name_prefix}-codebuild-project"
   description   = "CodeBuild project for ${var.name_prefix}"
   build_timeout = 10
 
@@ -94,9 +122,35 @@ resource "aws_codebuild_project" "this" {
     image                       = "aws/codebuild/standard:7.0"
     type                        = "LINUX_CONTAINER"
     privileged_mode             = true
+
     environment_variable {
       name  = "AWS_REGION"
       value = var.aws_region
+    }
+
+    environment_variable {
+      name  = "TASK_DEFINITION"
+      value = var.ecs_task_definition_name
+    }
+
+    environment_variable {
+      name  = "ECS_CLUSTER"
+      value = var.ecs_cluster_name
+    }
+
+    environment_variable {
+      name  = "SUBNET_ID"
+      value = var.subnet_id
+    }
+
+    environment_variable {
+      name  = "SECURITY_GROUP_ID"
+      value = var.security_group_id
+    }
+
+    environment_variable {
+      name  = "CLUSTER_NAME"
+      value = var.ecs_cluster_name
     }
   }
 
@@ -109,6 +163,8 @@ resource "aws_codebuild_project" "this" {
   depends_on = [
     aws_iam_role_policy_attachment.codebuild_policy,
     aws_iam_role_policy.codebuild_s3_access,
+    aws_iam_role_policy.codebuild_cloudwatch_policy,
+    aws_iam_role_policy.codebuild_ecs_access,
     aws_s3_bucket.artifact_bucket
   ]
 }

@@ -1,8 +1,3 @@
-variable "codebuild_service_role" {
-  description = "The name of the CodeBuild service role"
-  type        = string
-}
-
 variable "name_prefix" {
   description = "Prefix for resource names"
   type        = string
@@ -27,5 +22,25 @@ variable "buildspec_path" {
 
 variable "s3_bucket_name" {
   description = "The name of the S3 bucket to store build artifacts"
+  type        = string
+}
+
+variable "ecs_cluster_name" {
+  type        = string
+  description = "ECS cluster name where tasks will run"
+}
+
+variable "subnet_id" {
+  type        = string
+  description = "Subnet ID for ECS task"
+}
+
+variable "security_group_id" {
+  type        = string
+  description = "Security Group ID for ECS task"
+}
+
+variable "ecs_task_definition_name" {
+  description = "Nombre del task definition que ejecutará Terraform"
   type        = string
 }

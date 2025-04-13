@@ -73,3 +73,18 @@ variable "ecs_task_arn" {
   description = "ARN de la definición del task ECS"
   type        = string
 }
+
+variable "ecs_task_definition_name" {
+  description = "Nombre de la definición de tarea ECS."
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "ID de la subred para ECS."
+  type        = string
+}
+
+variable "security_group_id" {
+  description = "ID del grupo de seguridad."
+  type        = string
+}

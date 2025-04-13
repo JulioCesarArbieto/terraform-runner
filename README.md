@@ -97,10 +97,11 @@ PASOS:
 cd .\terraform-runner\modules\infra_core
 terraform init
 terraform plan
-terrafom apply -auto-approve
+terraform apply -auto-approve
+terraform destroy
 
 paso 2:
 cd .\terraform-runner\
 terraform init
 terraform plan
-terrafom apply -auto-approve
+terraform apply -auto-approve

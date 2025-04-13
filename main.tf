@@ -16,19 +16,49 @@
 #  s3_bucket_name          = var.s3_bucket_name
 #}
 
-module "codebuild_projects" {
-  source                = "./modules/codebuild_projects"
-  codebuild_service_role = "terraform-codebuild-role"  # Nombre del role de CodeBuild
-  name_prefix           = "terraform-runner"
-  aws_region            = var.aws_region
-  github_repo_url       = var.github_repo_url
-  buildspec_path        = "buildspec.yml"
-  s3_bucket_name        = "terraform-runner-artifacts-bucket"  # Nombre del bucket de S3
+module "network" {
+  source      = "./modules/network"
+  name_prefix = "terraform-runner"
 }
 
 module "ecr" {
-  source    = "./modules/ecr"
-  repo_name = "terraform-runner"
+  source          = "./modules/ecr"
+  repository_name = "terraform-runner"
+  tags = {
+    Project = "TerraformRunner"
+    Env     = "dev"
+  }
+}
+
+module "ecs_task" {
+  source          = "./modules/ecs_task"
+  name_prefix     = "terraform-runner"
+  aws_region      = var.aws_region
+  cpu             = "512"
+  memory          = "1024"
+  ecr_repo_url    = module.ecr.repository_url#var.ecr_repo_url
+  cluster_name    = "terraform-runner"
+  task_definition_name = "terraform-runner" 
+}
+
+#module "ecs_task" {
+#  source       = "./modules/ecs_task"
+#  name_prefix  = "terraform-runner"
+#  ecr_repo_url = module.ecr.repository_url
+#  aws_region   = var.aws_region
+#}
+
+module "codebuild_projects" {
+  source = "./modules/codebuild_projects"
+  name_prefix                = "terraform-runner"
+  aws_region                 = var.aws_region
+  github_repo_url            = var.github_repo_url
+  ecs_cluster_name           = module.ecs_task.cluster_name 
+  subnet_id                  = module.network.subnet_id
+  security_group_id          = module.network.security_group_id
+  buildspec_path             = "buildspec.yml"
+  s3_bucket_name             = var.s3_bucket_name
+  ecs_task_definition_name   = module.ecs_task.task_definition_name
 }
 
 module "sns_notifications" {
@@ -48,14 +78,6 @@ module "security_tools" {
   buildspec_path         = "buildspec/security-checks.yml"
   #name_prefix            = "terraform-runner"
   #aws_region             = var.aws_region
-}
-
-
-module "ecs_task" {
-  source       = "./modules/ecs_task"
-  name_prefix  = "terraform-runner"
-  ecr_repo_url = module.ecr.repository_url
-  aws_region   = var.aws_region
 }
 
 #module "codepipeline" {
