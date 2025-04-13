@@ -1,0 +1,12 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      terraform: 1.5
+  build:
+    commands:
+      - echo "Running Terraform Init"
+      - terraform init
+      - echo "Running Terraform Plan"
+      - terraform plan

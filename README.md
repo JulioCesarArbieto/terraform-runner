@@ -90,3 +90,17 @@ Inicializa Terraform y aplica el plan dentro de ECS, usando credenciales IAM del
 Este pipeline te da control total sobre los despliegues Terraform en AWS, asegurando seguridad, visibilidad y trazabilidad. Ideal para **equipos DevSecOps** y **auditorías regulatorias**.
 
 ---
+
+
+PASOS:
+1-
+cd .\terraform-runner\modules\infra_core
+terraform init
+terraform plan
+terrafom apply -auto-approve
+
+paso 2:
+cd .\terraform-runner\
+terraform init
+terraform plan
+terrafom apply -auto-approve

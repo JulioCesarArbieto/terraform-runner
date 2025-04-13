@@ -45,3 +45,14 @@ variable "github_webhook_secret_arn" {
   type        = string
   default     = ""
 }
+
+variable "name_prefix" {
+  description = "name_prefix nombre aplicacion"
+  type        = string
+  default     = ""
+}
+
+variable "codebuild_project_name" {
+  description = "Nombre del proyecto de CodeBuild que usará CodePipeline"
+  type        = string
+}

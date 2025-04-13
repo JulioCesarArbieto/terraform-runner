@@ -1,6 +1,6 @@
-module "infra_core" {
-  source = "./modules/infra_core"
-}
+#module "infra_core" {
+#  source = "./modules/infra_core"
+#}
 
 #module "codebuild_projects" {
 #  source                  = "./modules/codebuild_projects"
@@ -31,11 +31,6 @@ module "ecr" {
   repo_name = "terraform-runner"
 }
 
-
-module "s3_backend" {
-  source = "./modules/s3_backend"
-}
-
 module "sns_notifications" {
   source = "./modules/sns_notifications"
   email  = var.notification_email
@@ -43,9 +38,18 @@ module "sns_notifications" {
 
 module "security_tools" {
   source = "./modules/security_tools"
-  github_repo_url     = var.github_repo  # Aquí debes poner la URL de tu repositorio de GitHub
-  codebuild_service_role = var.codebuild_service_role  # Asumiendo que ya has creado un rol IAM para CodeBuild
+
+  codebuild_service_role = "terraform-codebuild-security-role" #module.codebuild_iam_role.codebuild_role_arn
+  s3_bucket_name         =  "terraform-codebuild-security"
+  #github_owner           = var.github_owner
+  #github_repo            = var.github_repo
+  #github_branch          = var.github_branch
+  github_repo_url       = var.github_repo_url
+  buildspec_path         = "buildspec/security-checks.yml"
+  #name_prefix            = "terraform-runner"
+  #aws_region             = var.aws_region
 }
+
 
 module "ecs_task" {
   source       = "./modules/ecs_task"
@@ -66,8 +70,20 @@ module "ecs_task" {
 #  github_webhook_secret_arn = var.github_webhook_secret_arn
 #}
 
-#module "eventbridge" {
-#  source        = "./modules/eventbridge"
-#  pipeline_arn  = module.codepipeline.pipeline_arn
-#  aws_region    = var.aws_region
-#}
+module "codepipeline" {
+  source            = "./modules/codepipeline"  # Ruta al módulo que creas
+  s3_bucket_name    = var.s3_bucket_name
+  github_owner      = var.github_owner
+  github_repo       = var.github_repo
+  github_branch     = var.github_branch
+  github_token      = var.github_token
+  name_prefix       = "terraform-runner"
+  codebuild_project_name = "terraform-runner"
+  #pipeline_role_arn = aws_iam_role.codepipeline_role.arn  # Role creado previamente
+}
+
+module "eventbridge" {
+  source        = "./modules/eventbridge"
+  name_prefix   = "terraform-runner"
+  codebuild_project_arn = module.codebuild_projects.aws_codebuild_project_arn
+}

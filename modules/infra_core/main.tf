@@ -1,4 +1,5 @@
 resource "aws_s3_bucket" "tf_backend" {
+  #provider      = aws.us_east_2
   bucket        = "terraform-runner-state"
   force_destroy = true
 
@@ -16,6 +17,7 @@ resource "aws_s3_bucket" "tf_backend" {
 
   lifecycle {
     prevent_destroy = false
+    ignore_changes  = all
   }
 
   tags = {
@@ -25,6 +27,7 @@ resource "aws_s3_bucket" "tf_backend" {
 }
 
 resource "aws_dynamodb_table" "tf_locks" {
+  #provider      = aws.us_east_2
   name         = "terraform-locks"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"

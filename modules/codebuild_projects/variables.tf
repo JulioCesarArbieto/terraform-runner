@@ -16,6 +16,7 @@ variable "aws_region" {
 variable "github_repo_url" {
   description = "GitHub repository URL (e.g. https://github.com/usuario/repo)"
   type        = string
+  default     = "https://github.com/JulioCesarArbieto/terraform-runner"
 }
 
 variable "buildspec_path" {
